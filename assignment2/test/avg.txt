@@ -1,0 +1,9 @@
+[
+    N = λ(start): [v=start, n=N (add start 1)], # list numbers
+    loop = λ(N, list): cond N [v=list v, n=loop (minus N 1) (list n)] [],
+    count = λ(values): cond values (add 1 (count (values n))) 0,
+    sum = λ(values): cond values (add (values v) (sum (values n))) 0,
+    avg = λ(values): div (sum values) (count values)
+]
+# calculate average from 1..9
+avg(loop 9 (N 1))

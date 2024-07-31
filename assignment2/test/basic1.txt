@@ -1,0 +1,1 @@
+(λ(x,y): add(mult x x) y) 3 1

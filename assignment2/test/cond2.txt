@@ -1,0 +1,3 @@
+myfunc = λ(x):
+	cond x [a=1] [a=2];
+myfunc 0 a;

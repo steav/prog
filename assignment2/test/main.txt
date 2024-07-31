@@ -1,0 +1,14 @@
+[
+    list = λ(c, f, x):
+        cond (c x)
+            [val = x, nxt = list c f (f x)]
+            [],
+    reduce = λ(f, x, lst):
+        cond lst
+            (f (reduce f x (lst nxt)) (lst val))
+            x,
+    range = λ(a, b):
+        list (λ(x): minus b x) (λ(x): add 1 x) a,
+    sum = λ(lst): reduce (λ(x, y): add x y) 0 lst
+]
+sum (range 3 6)

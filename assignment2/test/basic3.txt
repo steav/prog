@@ -1,0 +1,4 @@
+f1 = λ(x, y): add(mult x x) y;
+f2 = f1 3;
+f3 = f2 100;
+add(f2 1000) f3
