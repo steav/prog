@@ -78,7 +78,7 @@ class PredefinedNode(AbstractNode):
         return visitor.visit_predefined(self)
 
     def is_applyable(self) -> bool:
-        return len(self.children) < self.max_children
+        return len(list(self.children)) < self.max_children
 
     def apply(self, node: AbstractNode):
         if not isinstance(node, AbstractNode):
@@ -103,14 +103,14 @@ class Environment:
         self.define(str(Type.div), PredefinedNode(Type.div))
         self.define(str(Type.cond), PredefinedNode(Type.cond))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         parent = str
         if self.parent is not None:
             parent = repr(self.parent) + "\n"
         definitions = ",\n".join([f"{k} = {v}" for k, v in self.entries.items()])
         return parent + "{\n" + definitions + "\n}"
 
-    def define(self, name: str, node: AbstractNode):
+    def define(self, name: str, node: AbstractNode) -> None:
         if name in self.entries:
             raise Exception(f"Redefinition of already defined name: {name}")
         self.entries[name] = node
@@ -228,7 +228,6 @@ class AST(AbstractNodeVisitor):
         if node.type is Type.cond:
             children = list(node.children)
             if len(children) == 3:
-
                 cond = children[0]
                 if isinstance(cond, IntegerNode):
                     self.num_changes += 1

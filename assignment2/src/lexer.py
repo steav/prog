@@ -10,7 +10,13 @@ def is_digit(input):
     return re.search("[0-9]", input)
 
 def is_whitespace(input):
-    return re.search("[\s\s+]", input)
+    """
+    Checks if the given input is whitespace.
+
+    @param input the input to check
+    @return True if the input is whitespace, False otherwise
+    """
+    return re.search("[\\s+]", input)
 
 
 class Lexer:

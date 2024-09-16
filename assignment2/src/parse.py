@@ -127,14 +127,14 @@ class Parser:
             raise Exception("Expected lamda symbol at function begin")
 
         if not self.consume(TokenType.PARENTHESIS_LEFT):
-            raise Exception("Missing { after lamda symbol")
+            raise Exception("Missing ( after lamda symbol")
 
         params = [self.create_named()]
         while self.consume(TokenType.COMMA) and not self.is_end():
             params.append(self.create_named())
 
         if not self.consume(TokenType.PARENTHESIS_RIGHT):
-            raise Exception("Missing } after lamda param list")
+            raise Exception("Missing ) after lamda param list")
 
         if not self.consume(TokenType.COLON):
             raise Exception("Missing : after lambda param list")
