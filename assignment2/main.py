@@ -7,6 +7,12 @@ from src.parse import Parser
 
 
 def execute(code: str) -> int:
+    """
+    Execute a program in the simple programming language
+
+    @param code the programing language to execute
+    @return the result of the program
+    """
     env = Environment()
     statements = Parser(Lexer(code).scan_all()).parse()
     output = 0
@@ -25,6 +31,11 @@ def execute(code: str) -> int:
 
 
 def main(argv):
+    """
+    The main entry point of the program.
+
+    @param argv the command line arguments
+    """
     if len(argv) != 2:
         print("Error: Missing path to program file")
         exit(-1)

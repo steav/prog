@@ -3,29 +3,61 @@ from .token import TokenType
 
 
 class Parser:
+    """
+    Initialize a new parser.
+
+    :param tokens: the list of tokens produced by the lexer
+    """
     def __init__(self, tokens):
         self.cur = 0
         self.tokens = tokens
 
+    """
+    Parse the list of tokens produced by the lexer into a list of statements.
+
+    :return: list of statements
+    """
     def parse(self):
         statements = []
         while not self.is_end():
             statements.append(self.statement())
         return statements
 
+    """
+    Return the previous token in the list of tokens.
+
+    :return: previous token
+    """
     def prev(self):
         if self.cur > 0:
             return self.tokens[self.cur - 1]
         return self.tokens[0]
 
+    """
+    Return the next token in the list of tokens.
+
+    :return: next token
+    """
     def next(self):
         if not self.is_end():
             self.cur += 1
         return self.prev()
 
+    """
+    Seek by offset in the list of tokens.
+
+    :param offset: offset into the list of tokens
+    :return: the token at offset
+    """
     def seek(self, offset=0):
         return self.tokens[self.cur + offset]
 
+    """
+    Check if the current token matches one of the given types.
+
+    :param types: one or more TokenType
+    :return: True if the current token matches one of the given types
+    """
     def match(self, *types):
         if self.is_end():
             return False
@@ -34,9 +66,20 @@ class Parser:
                 return True
         return False
 
+    """
+    Check if the current position is at the end of the token list.
+
+    :return: True if the current position is at the end of the token list
+    """
     def is_end(self):
         return self.seek().type == TokenType.END
 
+    """
+    Consume the current token if it matches one of the given types.
+
+    :param types: one or more TokenType
+    :return: True if the current token matches one of the given types
+    """
     def consume(self, *types):
         for t in types:
             if self.match(t):
@@ -44,6 +87,12 @@ class Parser:
                 return True
         return False
 
+    """
+    Parse a statement.
+
+    A statement is either an expression or an assignment of the form
+    name = expr;
+    """
     def statement(self):
         if self.seek().type == TokenType.NAME and self.seek(1).type == TokenType.ASSIGN:
             name = self.create_named()
@@ -59,10 +108,16 @@ class Parser:
 
         return expr
 
+    """
+    Parse an expression.
+    """
     def expression(self):
         elements = []
         endings = [TokenType.PARENTHESIS_RIGHT, TokenType.BRACKET_RIGHT, TokenType.COMMA, TokenType.SEMICOLON]
 
+        # Expressions are sequences of elements, where each element is either an
+        # integer, a name, or a parenthesized expression. The expression ends
+        # when a ) or , or ; is encountered.
         while not (self.match(*endings) or self.is_end()):
             if self.match(TokenType.INTEGER):
                 expr = self.create_integer()
@@ -91,18 +146,35 @@ class Parser:
 
         return result
 
+
+    """
+    Create a named node.
+
+    @return a named node
+    """
     def create_named(self):
         name = self.next()
         return NameNode(name.expression)
 
+    """
+    Create an integer node.
+
+    @return an integer node
+    """
     def create_integer(self):
         value = self.next()
         return IntegerNode(int(value.expression))
 
+    """
+    Create a record node.
+
+    @return a record node
+    """
     def create_record(self):
         if not self.consume(TokenType.BRACKET_LEFT):
             raise Exception("Missing [ at start of record list")
         entries = dict()
+
         while not self.is_end() and (
                 self.consume(TokenType.COMMA) or not self.match(TokenType.BRACKET_RIGHT)):
             name = self.create_named()
@@ -122,6 +194,12 @@ class Parser:
 
         return ApplyNode(node, self.expression())
 
+
+    """
+    Create a function node.
+
+    @return a function node
+    """
     def create_func(self):
         if not self.consume(TokenType.LAMBDA):
             raise Exception("Expected lamda symbol at function begin")
